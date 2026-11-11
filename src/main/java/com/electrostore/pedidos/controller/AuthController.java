@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +34,11 @@ public class AuthController {
             String jwt = jwtUtils.generateToken(authentication);
             return ResponseEntity.ok(new AuthResponseDTO(jwt));
 
-        } catch (BadCredentialsException e) {
+        } catch (Exception e) { // <-- Atrapamos cualquier excepción
+            System.err.println("====== ERROR EN LOGIN ======");
+            e.printStackTrace(); // <-- Imprime el error completo en los logs de Render
+            System.err.println("============================");
+            
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("status", 401, "error", "Unauthorized", "message", "Usuario o contraseña incorrectos"));
         }
